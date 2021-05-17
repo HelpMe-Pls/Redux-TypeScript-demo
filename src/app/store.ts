@@ -1,10 +1,14 @@
+/* Everytime we create a new slice, we need to add its reducer function to our store */
+
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import postsReducer from '../features/posts/postsSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    posts: postsReducer,
   },
+  /* This tells Redux that we want our TOP-LEVEL STATE OBJECT to have a field named {posts} inside, and all the 
+  data for {state.posts} will be updated by the {postsReducer} function when actions are dispatched */
 });
 
 export type AppDispatch = typeof store.dispatch;
