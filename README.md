@@ -42,3 +42,10 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Initial Redux data flow:
+- Our posts list read the initial set of posts from the store with `useSelector` and rendered the initial UI
+- We dispatched the `postAdded` action containing the data for the new post entry
+- The posts reducer saw the `postAdded` action, and updated the posts array (in the store) with the new entry
+- The Redux store told the UI that some data had changed
+- The posts list read the updated posts array (from the `useSelector` hook), and re-rendered itself to show the new post

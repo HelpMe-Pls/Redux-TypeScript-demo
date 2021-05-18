@@ -8,7 +8,8 @@ export const store = configureStore({
     posts: postsReducer,
   },
   /* This tells Redux that we want our TOP-LEVEL STATE OBJECT to have a field named {posts} inside, and all the 
-  data for {state.posts} will be updated by the {postsReducer} function when actions are dispatched */
+  data for {state.posts} (e.g from the useSelector hook) will be updated by the {postsReducer} function
+  when actions are dispatched */
 });
 
 export type AppDispatch = typeof store.dispatch;
