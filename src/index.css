@@ -1,5 +1,6 @@
 :root {
   --redux-color: #764abc;
+  --react-color: #61dafb;
 }
 
 body {
@@ -25,7 +26,7 @@ p {
 nav {
   display: flex;
   padding: 0;
-  background: var(--redux-color);
+  background: var(--react-color)  /* */;
 }
 
 nav section {
@@ -43,7 +44,7 @@ nav a:active {
   padding: 0.25rem 1.5rem;
   border-radius: 4px;
   color: white !important;
-  background: #481499;
+  background: #FB8261;
 }
 
 nav a:first-of-type {
@@ -133,7 +134,7 @@ p.post-content {
 
 .button {
   display: inline-block;
-  background: #1976d2;
+  background: #43BC7E ;
   color: white;
   border-radius: 4px;
   font-weight: 700;
