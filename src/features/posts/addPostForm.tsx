@@ -1,6 +1,6 @@
-import { nanoid } from '@reduxjs/toolkit'   // Redux's random {id} generator 
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../app/store'
 import { postAdded } from './postsSlice'
 
 export const AddPostForm = () => {
@@ -9,27 +9,30 @@ export const AddPostForm = () => {
 
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
+    const [userId, setUserId] = useState('')
 
     const dispatch = useDispatch()
+    const users = useSelector((state: RootState) => state.users)
 
     const onTitleChanged = (e: any) => setTitle(e.target.value)
     const onContentChanged = (e: any) => setContent(e.target.value)
+    const onAuthorChanged = (e: any) => setUserId(e.target.value)
 
     const onSavePostClicked = () => {
         if (title && content) {
-            dispatch(   //dispatching the action containing data for the current post entry to update the store
-                postAdded({
-                    id: nanoid(),
-                    title,
-                    content
-                })
-            )
-
-            // reset input fields to blank to set up for the next inputs
+            dispatch(postAdded(title, content, userId))
             setTitle('')
             setContent('')
         }
     }
+
+    const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
+
+    const usersOptions = users.map((user) => (
+        <option key={user.id} value={user.id}>
+            {user.name}
+        </option>
+    ))
 
     return (
         <section>
@@ -43,14 +46,19 @@ export const AddPostForm = () => {
                     value={title}
                     onChange={onTitleChanged}
                 />
+                <label htmlFor="postAuthor">Author:</label>
+                <select id="postAuthor" value={userId} onChange={onAuthorChanged}>
+                    <option value=""></option>
+                    {usersOptions}
+                </select>
                 <label htmlFor="postContent">Post Content:</label> {/* if there's NO htmlFor then when we click on the label name (Post Content:) it's not focusing on the input, only focus when we click exactly on the input  */}
                 <textarea
                     name="postContent"
                     id="postContent"
                     value={content}
                     onChange={onContentChanged}>
-                </textarea> 
-                <button type="button" onClick={onSavePostClicked}> Save Post </button>
+                </textarea>
+                <button type="button" onClick={onSavePostClicked} disabled={!canSave}> Save Post </button>
                 {/* figure out why the fuck do we need a button type inside a fcking button */}
             </form>
         </section>

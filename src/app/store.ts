@@ -2,10 +2,13 @@
 
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import postsReducer from '../features/posts/postsSlice';
+import usersReducer from '../features/users/usersSlice';
+
 
 export const store = configureStore({
   reducer: {
     posts: postsReducer,
+    users: usersReducer,
   },
   /* This tells Redux that we want our TOP-LEVEL STATE OBJECT to have a field named {posts} inside, and all the 
   data for {state.posts} (e.g from the useSelector hook) will be updated by the {postsReducer} function
