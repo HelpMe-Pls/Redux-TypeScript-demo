@@ -22,8 +22,7 @@ function App() {
       <div className="App">
         <Switch>
           <Route
-            exact
-            path="/"
+            exact path="/"
             render={() => (
               <React.Fragment>
                 <AddPostForm />

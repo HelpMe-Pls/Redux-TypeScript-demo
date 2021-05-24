@@ -7,18 +7,19 @@ import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 import { RootState } from '../../app/store'
+import { selectPostById } from './postsSlice'
 
 export const SinglePostPage: React.FC<any> = ({ match }) => {
     const { postId } = match.params
 
     const post = useSelector((state: RootState) =>
-        state.posts.find((post) => post.id === postId)
+        selectPostById(state, postId)
     )
 
     if (!post) {
         return (
             <section>
-                <h2>Post not found!</h2>
+                <h2>Post not found :P</h2>
             </section>
         )
     }

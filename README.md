@@ -70,8 +70,24 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - Components can combine values from props, state, and the Redux store to determine what UI they need to render. They can read multiple pieces of data from the store, and reshape the data as needed for display.
     - Any component can dispatch actions to cause state updates
 - Redux action creators can prepare action objects with the right contents
-    - createSlice and createAction can accept a "prepare callback" that returns the action payload
+    - `createSlice` and `createAction` can accept a "prepare callback" that returns the action payload
     - Unique IDs and other random values should be put in the action, not calculated in the reducer
 - Reducers should contain the actual state update logic
     - Reducers can contain whatever logic is needed to calculate the next state
     - Action objects should contain just enough info to describe what happened
+
+## Async logic and data fetching:
+- Existing CSS bugs in AddNewPost component
+- You can write reusable "selector" functions to encapsulate reading values from the Redux state
+    - Selectors are functions that get the Redux state as an argument, and return some data
+- Redux uses plugins called "middleware" to enable async logic
+    - The standard async middleware is called `redux-thunk`, which is included in Redux Toolkit
+    - Thunk functions receive `dispatch` and `getState` as arguments, and can use those as part of async logic
+- You can dispatch additional actions to help track the loading status of an API call
+    - The typical pattern is dispatching a "pending" action before the call, then either a "success" containing the data or a "failure" action containing the error
+    - Loading state should usually be stored as an enum, like 'idle' | 'loading' | 'succeeded' | 'failed'
+- Redux Toolkit has a `createAsyncThunk` API that dispatches these actions for you
+    - `createAsyncThunk` accepts a "payload creator" callback that should return a Promise, and generates pending/fulfilled/rejected action types automatically
+    - Generated action creators like `fetchPosts` dispatch those actions based on the Promise you return
+    - You can listen for these action types in `createSlice` using the `extraReducers` field, and update the state in reducers based on those actions.
+    - Action creators can be used to automatically fill in the keys of the `extraReducers` object so the slice knows what actions to listen for.

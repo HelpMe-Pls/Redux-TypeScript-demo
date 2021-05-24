@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { RootState } from '../../app/store'
 
-import { postUpdated } from './postsSlice'
+import { postUpdated, selectPostById } from './postsSlice'
 
 export const EditPostForm: React.FC<any> = ({ match }) => {
     const { postId } = match.params
 
     const post = useSelector((state: RootState) =>
-        state.posts.find((post) => post.id === postId)
+        selectPostById(state, postId)
     )
 
     const [title, setTitle] = useState(post?.title)
