@@ -12,8 +12,8 @@ export const EditPostForm: React.FC<any> = ({ match }) => {
         selectPostById(state, postId)
     )
 
-    const [title, setTitle] = useState(post?.title)
-    const [content, setContent] = useState(post?.content)
+    const [title, setTitle] = useState(post.title)
+    const [content, setContent] = useState(post.content)
 
     const dispatch = useDispatch()
     const history = useHistory()
@@ -37,7 +37,7 @@ export const EditPostForm: React.FC<any> = ({ match }) => {
                     type="text"
                     id="postTitle"
                     name="postTitle"
-                    placeholder="What's on your mind?"
+                    placeholder="Roll it back..."
                     value={title}
                     onChange={onTitleChanged}
                 />

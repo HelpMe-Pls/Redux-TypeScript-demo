@@ -13,8 +13,8 @@ const PostExcerpt: React.FC<any> = ({ post }) => {
         <article className="post-excerpt" key={post.id}>
             <h3>{post.title}</h3>
             <div>
-                <PostAuthor userId={post?.user} />
-                <TimeAgo timestamp={post?.date} />
+                <PostAuthor userId={post.user} />
+                <TimeAgo timestamp={post.date} />
             </div>
             <p className="post-content">{post.content.substring(0, 100)}</p>    {/* posts limited to 100 char */}
 

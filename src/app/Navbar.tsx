@@ -12,6 +12,7 @@ export const Navbar = () => {
             <Link to="/users">Users</Link>
           </div>
         </div>
+
       </section>
     </nav>
   )

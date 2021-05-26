@@ -10,7 +10,7 @@ import { RootState } from '../../app/store'
 import { selectPostById } from './postsSlice'
 
 export const SinglePostPage: React.FC<any> = ({ match }) => {
-    const { postId } = match.params
+    const { postId } = match.params         // it has to be {match} or it wouldn't work with <Link>
 
     const post = useSelector((state: RootState) =>
         selectPostById(state, postId)

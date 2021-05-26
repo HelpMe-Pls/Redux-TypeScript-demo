@@ -4,7 +4,7 @@ import { selectAllUsers } from "./usersSlice"
 
 
 
-export const UsersList = () => {
+export const UsersList: React.FC<any> = () => {
     const users = useSelector(selectAllUsers)
 
     const renderedUsers = users.map(user => (
