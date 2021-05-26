@@ -36,7 +36,7 @@ export const SinglePostPage: React.FC<any> = ({ match }) => {
                 <ReactionButtons post={post} />
                 <Link to={`/editPost/${post.id}`} className="button">
                     Edit Post
-        </Link>
+                </Link>
             </article>
         </section>
     )
