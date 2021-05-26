@@ -5,7 +5,7 @@ import postsReducer from '../features/posts/postsSlice';
 import usersReducer from '../features/users/usersSlice';
 
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
     posts: postsReducer,
     users: usersReducer,
@@ -15,6 +15,7 @@ export const store = configureStore({
   when actions are dispatched */
 });
 
+export default store
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<

@@ -59,7 +59,7 @@ export const AddPostForm = () => {
         <section>
             <h2>Add a New Post</h2>
             <form>
-                <label htmlFor="postTitle">Post Title:</label> {/* htmlFor refers to the {id} of the element this label associated with, in this case, the <input> */}
+                <label htmlFor="postTitle">Post Title:</label>
                 <input
                     type="text"
                     id="postTitle"
@@ -73,15 +73,18 @@ export const AddPostForm = () => {
                     <option value=""></option>
                     {usersOptions}
                 </select>
-                <label htmlFor="postContent">Post Content:</label> {/* if there's NO htmlFor then when we click on the label name (Post Content:) it's not focusing on the input, only focus when we click exactly on the input  */}
+                <label htmlFor="postContent">Content:</label>
                 <textarea
-                    name="postContent"
                     id="postContent"
+                    name="postContent"
                     value={content}
-                    onChange={onContentChanged}>
-                </textarea>
-                <button type="button" onClick={onSavePostClicked} disabled={!canSave}> Save Post </button>
-                {/* figure out why the fuck do we need a button type inside a fcking button */}
+                    onChange={onContentChanged}
+                />
+                <button type="button" onClick={onSavePostClicked} disabled={!canSave}>
+                    Save Post
+                </button>
+                {/* button without type will behave as submit type that's y we need to declare it as type="button",
+                which does nothing for the button so that its functionality is solely depends on the onClick */}
             </form>
         </section>
     )
