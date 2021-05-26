@@ -53,7 +53,7 @@ nav a:first-of-type {
 
 nav a:hover {
   color: white;
-  background: #926bcf;
+  background: #FA5B2F;
 }
 
 .navContent {
@@ -134,7 +134,7 @@ p.post-content {
 
 .button {
   display: inline-block;
-  background: #43BC7E ;
+  background: #56ad34 ;
   color: white;
   border-radius: 4px;
   font-weight: 700;
@@ -144,6 +144,11 @@ p.post-content {
 button:disabled,
 button:disabled:hover {
   opacity: 0.5;
+}
+
+button:hover{
+  color: white;
+  background: #CF61FB;
 }
 
 button.reaction-button {

@@ -79,7 +79,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ## Async logic and data fetching:
 - Existing CSS bugs in AddNewPost component
 - You can write reusable "selector" functions to encapsulate reading values from the Redux state
-    - Selectors are functions that get the Redux state as an argument, and return some data
+    - Selectors are functions that get the Redux `state` as an argument, and return some data
 - Redux uses plugins called "middleware" to enable async logic
     - The standard async middleware is called `redux-thunk`, which is included in Redux Toolkit
     - Thunk functions receive `dispatch` and `getState` as arguments, and can use those as part of async logic
