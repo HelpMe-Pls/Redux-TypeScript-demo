@@ -12,7 +12,7 @@ import {
 
 export const NotificationsList = () => {
     const dispatch = useDispatch()
-    const notifications: any = useSelector(selectAllNotifications)   // chek if it's actually {any} type
+    const notifications: any = useSelector(selectAllNotifications)   // chek if it's not {any} type then what would it be ?
     const users = useSelector(selectAllUsers)
 
     useEffect(() => {
