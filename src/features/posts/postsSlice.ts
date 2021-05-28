@@ -3,9 +3,10 @@ We're gonna use createSlice function (from Redux toolkit) to make a reducer func
 handle out posts data. It needs to some initial data included so that
 the Redux store has those values loaded when the app starts up */
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 import { RootState } from '../../app/store'
+import { IUserState } from '../users/usersSlice'
 
 interface IPostState {
     posts: any[],
@@ -115,4 +116,9 @@ export default postsSlice.reducer   //to import it in the store
 export const selectAllPosts = (state: RootState) => state.posts.posts
 
 export const selectPostById = (state: RootState, postId: string) => state.posts.posts.find(post => post.id === postId)
+
+export const selectPostsByUser = createSelector(
+    [selectAllPosts, (state: RootState, userId: IUserState) => userId], // not omitting {state} for the sake of calling it in UserPage
+    (posts, userId) => posts.filter(post => post.user === userId)
+)
 

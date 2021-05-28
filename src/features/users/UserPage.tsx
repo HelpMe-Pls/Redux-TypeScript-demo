@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
 import { selectUserById } from '../users/usersSlice'
-import { selectAllPosts } from '../posts/postsSlice'
+import { selectPostsByUser } from '../posts/postsSlice'
 import { RootState } from '../../app/store'
 
 export const UserPage: React.FC<any> = ({ match }) => {
@@ -13,11 +13,16 @@ export const UserPage: React.FC<any> = ({ match }) => {
     }
     )
 
-    const postsForUser = useSelector((state: RootState) => {
-        const allPosts = selectAllPosts(state)  // the type of allPosts: any[] coz IPostState.posts: any[]
-        return allPosts.filter(post => post.user === userId)
-        // this means that useSelector always returns a new array reference, and so our component will re-render after every action even if the posts data hasn't changed!
-    })
+    const postsForUser = useSelector((state: RootState) => selectPostsByUser(state, userId))
+    // run the React profiler while fetching notifications, we should see that <UserPage> doesn't re-render anymore 
+    //=>help us avoid unnecessary re-renders, and also avoid doing potentially complex or expensive calculations if the input data hasn't changed
+
+    // const postsForUser = useSelector((state: RootState) => {
+    //     const allPosts = selectAllPosts(state)  // the type of allPosts: any[] coz IPostState.posts: any[]
+    //     return allPosts.filter(post => post.user === userId)
+    //     // this means that useSelector always returns a new array reference, and so our component will re-render after every action even if the posts data hasn't changed! 
+    // fix this with the alternating code above
+    // })
     /* we can take data from one useSelector call, or from props, and use that (in this case: {user}) to help decide
        what (in this case: {post}) to read from the store in another useSelector call (in this case: {postsForUser}). */
 
