@@ -19,7 +19,7 @@ const usersSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: {
-        [fetchUsers.fulfilled.toString()]: (state, action) => {     // toString() is for type checking
+        [fetchUsers.fulfilled.toString()]: (state, action) => {     // why {state} isn't used but when we omit it, shits hit the fan
             return action.payload
         }
     }
@@ -28,7 +28,7 @@ const usersSlice = createSlice({
 export const selectAllUsers = (state: RootState) => state.users     // to be imported in UsersList
 
 export const selectUserById = (state: RootState, userId: string) => {   // to be imported in UserPage
-    return (state.users.find(user => user.id === userId))
+    return (state.users.find((user: any) => user.id === userId))
 }
 
 export default usersSlice.reducer

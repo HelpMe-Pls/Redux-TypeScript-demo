@@ -16,6 +16,7 @@ export const UserPage: React.FC<any> = ({ match }) => {
     const postsForUser = useSelector((state: RootState) => {
         const allPosts = selectAllPosts(state)  // the type of allPosts: any[] coz IPostState.posts: any[]
         return allPosts.filter(post => post.user === userId)
+        // this means that useSelector always returns a new array reference, and so our component will re-render after every action even if the posts data hasn't changed!
     })
     /* we can take data from one useSelector call, or from props, and use that (in this case: {user}) to help decide
        what (in this case: {post}) to read from the store in another useSelector call (in this case: {postsForUser}). */

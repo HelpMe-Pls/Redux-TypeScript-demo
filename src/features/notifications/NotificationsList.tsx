@@ -10,13 +10,14 @@ import {
     allNotificationsRead
 } from './notificationsSlice'
 
+
 export const NotificationsList = () => {
     const dispatch = useDispatch()
     const notifications: any = useSelector(selectAllNotifications)   // chek if it's not {any} type then what would it be ?
     const users = useSelector(selectAllUsers)
 
     useEffect(() => {
-        dispatch(allNotificationsRead())
+        dispatch(allNotificationsRead())    // executes on every renders
     })
 
     const renderedNotifications = notifications.map((notification: any) => {     // chek if it's actually {any} type
