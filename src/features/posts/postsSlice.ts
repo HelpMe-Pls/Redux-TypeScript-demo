@@ -23,7 +23,7 @@ const initialState: IPostState = {
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {    // 'posts/fetchPosts' (a string) will be used as the prefix for the generated action types
     const response = await client.get('/fakeApi/posts')
     return response.posts   // response is logged in console by miragejs or we can view it in the "Action" tab from Redux Devtool 
-    // this second param as a "payload creator" callback function t0hat should return a Promise containing some data, or a rejected Promise with an error
+    // this second param as a "payload creator" callback function that should return a Promise containing some data, or a rejected Promise with an error
 })
 
 export const addNewPost: any = createAsyncThunk( //We can use {createAsyncThunk} to help with sending data, not just fetching it
