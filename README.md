@@ -91,3 +91,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - Generated action creators like `fetchPosts` dispatch those actions based on the Promise you return
     - You can listen for these action types in `createSlice` using the `extraReducers` field, and update the state in reducers based on those actions.
     - Action creators can be used to automatically fill in the keys of the `extraReducers` object so the slice knows what actions to listen for.
+
