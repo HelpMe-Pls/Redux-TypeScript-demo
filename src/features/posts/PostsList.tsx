@@ -27,7 +27,7 @@ const PostExcerpt: React.FC<any> = ({ post }) => {
 }
 
 export const PostsList = () => {
-    /* The component reads data from the Redux store using the {useSelector} hook. 
+    /* The component reads data from the Redux store using the {useSelector} hook.  
     useSelector will be called with the entire Redux {state} abject as a parameter, and should return
     the specific data that this component needs from the store 
     Any time an action has been dispatched and the store has been updated, {useSelector} will re-run to update the data */
