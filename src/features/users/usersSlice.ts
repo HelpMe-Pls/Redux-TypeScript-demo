@@ -7,7 +7,7 @@ export interface IUserState {
     name: string
 }
 
-const initialState: IUserState[] = []
+const initialState: IUserState[] = []   // any better way to initiate an empty list ?
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
     const response = await client.get('/fakeApi/users')
@@ -28,7 +28,7 @@ const usersSlice = createSlice({
 export const selectAllUsers = (state: RootState) => state.users     // to be imported in UsersList
 
 export const selectUserById = (state: RootState, userId: string) => {   // to be imported in UserPage
-    return (state.users.find((user: any) => user.id === userId))
+    return (state.users.find((user: IUserState) => user.id === userId))
 }
 
-export default usersSlice.reducer
+export default usersSlice.reducer   // to be imported in store
