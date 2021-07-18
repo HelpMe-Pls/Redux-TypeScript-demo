@@ -8,6 +8,7 @@ import { client } from '../../api/client'
 import { RootState } from '../../app/store'
 import { IUserState } from '../users/usersSlice'
 
+// createEntityAdapter defined the {state} for us so we don't have to declare an interface for it ??
 // interface IPostState {
 //     posts: any[],
 //     status: string,
@@ -15,9 +16,18 @@ import { IUserState } from '../users/usersSlice'
 // }
 
 const postsAdapter = createEntityAdapter({
-    sortComparer: (a: any, b: any) => b.date.localeCompare(a.date),
+    sortComparer: (a: any, b: any) => b.date.localeCompare(a.date), // sort newer items to the front based on the post.date field
 })
 
+// Since we've been storing our data in arrays, that means we have to loop over all the items in the array using array.find()
+// until we find the item with the ID we're looking for, and that becomes wasted effort
+// What we need is a way to look up a single item based on its ID, directly, without having to check all the other items.
+// This process is known as "normalization"
+// Redux Toolkit's createEntityAdapter API provides a standardized way to store your data in a slice by taking a collection of items
+// and putting them into the shape of { ids: [], entities: {} }
+
+// getInitialState() returns an empty {ids: [], entities: {}} normalized state object
+// You can pass in more fields (in this case: {status} and {error}) to getInitialState, and those will be merged in.
 const initialState = postsAdapter.getInitialState({
     status: 'idle',
     error: null,
@@ -74,14 +84,14 @@ const postsSlice = createSlice({
         }, */
         reactionAdded(state, action) {
             const { postId, reaction } = action.payload
-            const existingPost = state.entities[postId]
+            const existingPost = state.entities[postId] // postId from payload
             if (existingPost) {
                 existingPost.reactions[reaction]++
             }
         },
         postUpdated(state, action) {
             const { id, title, content } = action.payload
-            const existingPost = state.entities[id]
+            const existingPost = state.entities[id] // id from payload
             if (existingPost) {
                 existingPost.title = title
                 existingPost.content = content
@@ -97,12 +107,17 @@ const postsSlice = createSlice({
         [fetchPosts.fulfilled.toString()]: (state, action) => {
             state.status = 'succeeded'
             // Add any fetched posts to the array
+            // Use the `upsertMany` reducer as a mutating update utility:
+            //   to add all of the incoming posts to the state, by passing in the draft {state} and the array of posts in action.payload
+            //   If there's any items in action.payload that already existing in our state,
+            //   the upsertMany function will merge them together based on matching IDs
             postsAdapter.upsertMany(state, action.payload)
         },
         [fetchPosts.rejected.toString()]: (state, action) => {
             state.status = 'failed'
             state.error = action.error.message
         },
+        // Use the `addOne` reducer for the fulfilled case to add one new post object to our state
         [addNewPost.fulfilled]: postsAdapter.addOne,
     }
 })
@@ -113,11 +128,14 @@ export const { postUpdated, reactionAdded } = postsSlice.actions
 
 export default postsSlice.reducer   //to import it in the store
 
-export const {
+// Export the customized selectors for this adapter using the generated `getSelectors`    
+export const {  //use ES6 destructuring syntax to rename them as we export them and match the old selector names
     selectAll: selectAllPosts,
     selectById: selectPostById,
     selectIds: selectPostIds,
-} = postsAdapter.getSelectors((state: any) => state.posts)  //any ?
+} = postsAdapter.getSelectors((state: RootState) => state.posts)   // Pass in a selector that returns the posts slice of state
+// Since the selectors are called with the root Redux state object, they need to know where to find our posts data
+// in the Redux state, so we pass in a small selector that returns state.posts
 
 export const selectPostsByUser = createSelector(
     [selectAllPosts, (state: RootState, userId: IUserState) => userId], // not omitting {state} for the sake of calling it in UserPage
