@@ -52,6 +52,8 @@ export const PostsList = () => {
     } else if (postStatus === 'succeeded') {
         content = orderedPostIds.map((postID) => (
             <PostExcerpt key={postID} postId={postID} />
+            // Now, if we try clicking a reaction button on one of the posts while capturing a React component performance
+            // profile, we should see that only this component is re-rendered
         ))
     } else if (postStatus === 'failed') {
         content = <div>{error}</div>
