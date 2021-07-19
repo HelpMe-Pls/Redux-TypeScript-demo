@@ -4,11 +4,13 @@ import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
-import { fetchPosts, selectAllPosts } from './postsSlice'
+import { fetchPosts, selectPostIds, selectPostById } from './postsSlice'
 import { RootState } from '../../app/store'
 import { useEffect } from 'react'
 
-const PostExcerpt: React.FC<any> = ({ post }) => {
+
+let PostExcerpt: React.FC<any> = ({ postId }) => {
+    const post = useSelector((state: RootState) => selectPostById(state, postId))
     return (
         <article className="post-excerpt" key={post.id}>
             <h3>{post.title}</h3>
@@ -32,8 +34,8 @@ export const PostsList = () => {
     the specific data that this component needs from the store 
     Any time an action has been dispatched and the store has been updated, {useSelector} will re-run to update the data */
     const dispatch = useDispatch()
+    const orderedPostIds = useSelector(selectPostIds)
 
-    const posts = useSelector(selectAllPosts)
     const postStatus = useSelector((state: RootState) => state.posts.status)
     const error = useSelector((state: RootState) => state.posts.error)
 
@@ -48,13 +50,8 @@ export const PostsList = () => {
     if (postStatus === 'loading') {
         content = <div className="loader">Loading...</div>
     } else if (postStatus === 'succeeded') {
-        // Sort posts in reverse chronological order by datetime string
-        const orderedPosts = posts
-            .slice()
-            .sort((a: { date: any }, b: { date: string }) => b.date.localeCompare(a.date))
-
-        content = orderedPosts.map((post: { id: any }) => (
-            <PostExcerpt key={post.id} post={post} />
+        content = orderedPostIds.map((postID) => (
+            <PostExcerpt key={postID} postId={postID} />
         ))
     } else if (postStatus === 'failed') {
         content = <div>{error}</div>

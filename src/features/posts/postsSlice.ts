@@ -129,7 +129,7 @@ export const { postUpdated, reactionAdded } = postsSlice.actions
 export default postsSlice.reducer   //to import it in the store
 
 // Export the customized selectors for this adapter using the generated `getSelectors`    
-export const {  //use ES6 destructuring syntax to rename them as we export them and match the old selector names
+export const {  //use ES6 destructuring syntax to RENAME them (the GENERATED EntitySelectors, left side of the colon) as we export them and muse them as the old selector names 
     selectAll: selectAllPosts,
     selectById: selectPostById,
     selectIds: selectPostIds,
