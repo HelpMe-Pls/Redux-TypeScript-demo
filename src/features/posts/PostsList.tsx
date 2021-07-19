@@ -33,7 +33,7 @@ export const PostsList = () => {
     Any time an action has been dispatched and the store has been updated, {useSelector} will re-run to update the data */
     const dispatch = useDispatch()
 
-    const posts = useSelector(selectAllPosts)
+    const posts = useSelector(selectAllPosts)   // bad for performance since it'll re-render the entire posts list just to update changes in 1 post 
     const postStatus = useSelector((state: RootState) => state.posts.status)
     const error = useSelector((state: RootState) => state.posts.error)
 
