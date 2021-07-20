@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, createEntityAdapter } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 import { RootState } from '../../app/store'
 
@@ -7,7 +7,9 @@ export interface IUserState {
     name: string
 }
 
-const initialState: IUserState[] = []   // any better way to initiate an empty list ?
+const usersAdapter = createEntityAdapter<IUserState>()
+
+const initialState = usersAdapter.getInitialState()   // any better way to initiate an empty list ?
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
     const response = await client.get('/fakeApi/users')
@@ -19,16 +21,13 @@ const usersSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: {
-        [fetchUsers.fulfilled.toString()]: (state, action) => {     // why {state} isn't used but when we omit it, shits hit the fan
-            return action.payload
-        }
+        [fetchUsers.fulfilled.toString()]: usersAdapter.setAll
     }
 })
 
-export const selectAllUsers = (state: RootState) => state.users     // to be imported in UsersList
-
-export const selectUserById = (state: RootState, userId: string) => {   // to be imported in UserPage
-    return (state.users.find((user: IUserState) => user.id === userId))
-}
+export const {
+    selectAll: selectAllUsers,
+    selectById: selectUserById,
+} = usersAdapter.getSelectors((state: RootState) => state.users)
 
 export default usersSlice.reducer   // to be imported in store

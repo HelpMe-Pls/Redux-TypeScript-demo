@@ -1,10 +1,11 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { selectUserById } from '../users/usersSlice'
 import { RootState } from '../../app/store'
 
 export const PostAuthor: React.FC<any> = ({ userId }) => {
     const author = useSelector((state: RootState) =>
-        state.users.find((user) => user.id === userId)
+        selectUserById(state, userId)
     )
 
     return <span>by {author ? author.name : 'Unknown author'}</span>

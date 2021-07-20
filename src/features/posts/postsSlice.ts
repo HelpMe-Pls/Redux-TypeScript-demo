@@ -8,7 +8,7 @@ import { client } from '../../api/client'
 import { RootState } from '../../app/store'
 import { IUserState } from '../users/usersSlice'
 
-// createEntityAdapter defined the {state} for us so we don't have to declare an interface for it ??
+// createEntityAdapter implicitly define the {posts}'s properties as `any` so we don't need an interface for it 
 // interface IPostState {
 //     posts: any[],
 //     status: string,
@@ -129,7 +129,9 @@ export const { postUpdated, reactionAdded } = postsSlice.actions
 export default postsSlice.reducer   //to import it in the store
 
 // Export the customized selectors for this adapter using the generated `getSelectors`    
-export const {  //use ES6 destructuring syntax to RENAME them (the GENERATED EntitySelectors, left side of the colon) as we export them and muse them as the old selector names 
+export const {
+    // use ES6 destructuring syntax to RENAME them (the GENERATED EntitySelectors, left side of the colon) 
+    // as we export them and use them as the old selector names (right side of the colon)
     selectAll: selectAllPosts,
     selectById: selectPostById,
     selectIds: selectPostIds,
