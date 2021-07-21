@@ -1,4 +1,7 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/), [Redux Toolkit](https://redux-toolkit.js.org/) and [TypeScript](https://www.typescriptlang.org/) template:
+
+### `npx create-react-app my-app --template redux-typescript`
+
 
 ## Available Scripts
 
@@ -43,7 +46,10 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 
 To learn React, check out the [React documentation](https://reactjs.org/).
 
-## Basic Redux data flow:
+
+######################################################################
+
+# Basic Redux data flow:
 - Our posts list read the initial set of posts from the store with `useSelector` and rendered the initial UI
 - We dispatched the `postAdded` action containing the data for the new post entry
 - The posts reducer saw the `postAdded` action, and updated the posts array (in the store) with the new entry
@@ -62,7 +68,8 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - Reducers will run, check to see if this action is relevant, and return new state if appropriate
     - Temporary data like form input values should be kept as React component state. Dispatch a Redux action to update the store when the user is done with the form.
 
-## Using Redux data:
+#############################
+# Using Redux data:
 - Any React component can use data from the Redux store as needed
     - Any component can read any data that is in the Redux store
     - Multiple components can read the same data, even at the same time
@@ -76,8 +83,9 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - Reducers can contain whatever logic is needed to calculate the next state
     - Action objects should contain just enough info to describe what happened
 
-## Async logic and data fetching:
-- Existing CSS bugs in AddNewPost component
+#############################
+
+# Async logic and data fetching:
 - You can write reusable "selector" functions to encapsulate reading values from the Redux state
     - Selectors are functions that get the Redux `state` as an argument, and return some data
 - Redux uses plugins called "middleware" to enable async logic
@@ -92,3 +100,25 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - You can listen for these action types in `createSlice` using the `extraReducers` field, and update the state in reducers based on those actions.
     - Action creators can be used to automatically fill in the keys of the `extraReducers` object so the slice knows what actions to listen for.
 
+#############################
+
+# Performance and Normalizing data:
+- Memoized selector functions can be used to optimize performance
+  - Redux Toolkit re-exports the `createSelector` function from Reselect, which generates memoized selectors
+  - Memoized selectors will only recalculate the results if the input selectors return new values
+  - Memoization can skip expensive calculations, and ensure the same result references are returned
+- There are multiple patterns you can use to optimize React component rendering with Redux
+    - Avoid creating new object/array references inside of `useSelector` - those will cause unnecessary re-renders
+    - Memoized selector functions can be passed to `useSelector` to optimize rendering
+    - `useSelector` can accept an alternate comparison function like `shallowEqual` instead of reference equality
+    - *Components can be wrapped in `React.memo()` to only re-render if their props change*
+    - List rendering can be optimized by having list parent components read just an array of item IDs, passing the IDs to list item children, and retrieving items by ID in the children
+- Normalized state structure is a recommended approach for storing items
+    - "Normalization" means no duplication of data, and keeping items stored in a lookup table by item ID
+    - Normalized state shape usually looks like `{ids: [], entities: {}}`
+- Redux Toolkit's `createEntityAdapter` API helps manage normalized data in a slice
+    - Item IDs can be kept in sorted order by passing in a `sortComparer` option
+    - The adapter object includes:
+        - `adapter.getInitialState`, which can accept additional state fields like loading state
+        - Prebuilt reducers for common cases, like `setAll`, `addMany`, `upsertOne`, and `removeMany`
+        - `adapter.getSelectors`, which generates selectors like `selectAll` and `selectById`
