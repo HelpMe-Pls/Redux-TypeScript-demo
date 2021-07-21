@@ -13,14 +13,14 @@ import {
 
 export const NotificationsList = () => {
     const dispatch = useDispatch()
-    const notifications: any = useSelector(selectAllNotifications)   // chek if it's not {any} type then what would it be ?
+    const notifications = useSelector(selectAllNotifications)   // chek if it's not {any} type then what would it be ?
     const users = useSelector(selectAllUsers)
 
     useEffect(() => {
         dispatch(allNotificationsRead())    // executes on every renders
     })
 
-    const renderedNotifications = notifications.map((notification: any) => {     // chek if it's actually {any} type
+    const renderedNotifications = notifications.map((notification) => {     // chek if it's actually {any} type
         const date = parseISO(notification.date)
         const timeAgo = formatDistanceToNow(date)
         const user = users.find(user => user.id === notification.user) || {

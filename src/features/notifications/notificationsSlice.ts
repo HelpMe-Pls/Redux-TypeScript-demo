@@ -1,17 +1,17 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 
 import { client } from '../../api/client'
-import { RootState } from '../../app/store'
 
 
+// interface INotiState {
+//     read: boolean,
+//     isNew: boolean,
+//     date: string
+// }
 
-interface INotiState {
-    read: boolean,
-    isNew: boolean,
-    date: string
-}
-
-const initialState: INotiState[] = []
+const notificationsAdapter = createEntityAdapter({
+    sortComparer: (a: any, b: any) => b.date.localeCompare(a.date),
+})
 
 
 export const fetchNotifications = createAsyncThunk(
@@ -30,23 +30,21 @@ export const fetchNotifications = createAsyncThunk(
 
 const notificationsSlice = createSlice({
     name: 'notifications',
-    initialState,
+    initialState: notificationsAdapter.getInitialState(),
     reducers: {
-        allNotificationsRead(state) {   // {state} is implicitly recognized as INotiState[] 
-            state.forEach((notification) => {  // {notification} from the {state} or API ?
+        allNotificationsRead(state) {
+            Object.values(state.entities).forEach((notification) => {  // {notification} from the {state} or API ?
                 notification.read = true    // marks all notifications as read
             })
         }
     },
     extraReducers: {
         [fetchNotifications.fulfilled.toString()]: (state, action) => {
-            state.forEach(notification => {
+            Object.values(state.entities).forEach((notification) => {
                 // Any notifications we've read are no longer new
                 notification.isNew = !notification.read     // shit happens
             })
-            state.push(...action.payload)   // used spread operator to update the whole list, but for some cases didn't work ?
-            // Sort with newest first
-            state.sort((a, b) => b.date.localeCompare(a.date))
+            notificationsAdapter.upsertMany(state, action.payload)
         }
     }
 })
@@ -55,4 +53,6 @@ export default notificationsSlice.reducer   //to be imported in store
 
 export const { allNotificationsRead } = notificationsSlice.actions  // to be dispatched in the view (NotificationsList)
 
-export const selectAllNotifications: any = (state: RootState) => state.notifications    // find a way to omit {any} type and it still works
+export const {
+    selectAll: selectAllNotifications,
+} = notificationsAdapter.getSelectors((state: any) => state.notifications)
