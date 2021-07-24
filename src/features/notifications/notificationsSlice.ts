@@ -42,7 +42,7 @@ const notificationsSlice = createSlice({
         [fetchNotifications.fulfilled.toString()]: (state, action) => {
             Object.values(state.entities).forEach((notification) => {
                 // Any notifications we've read are no longer new
-                notification.isNew = !notification.read     // shit happens
+                notification.isNew = !notification.read
             })
             notificationsAdapter.upsertMany(state, action.payload)
         }
