@@ -7,23 +7,24 @@ import { selectAllUsers } from '../users/usersSlice'
 
 import {
     selectAllNotifications,
-    allNotificationsRead
+    allNotificationsRead,
+    INotiState
 } from './notificationsSlice'
 
 
 export const NotificationsList = () => {
     const dispatch = useDispatch()
-    const notifications = useSelector(selectAllNotifications)   // chek if it's not {any} type then what would it be ?
+    const notifications = useSelector(selectAllNotifications) // the {notifications}'s type is implicitly returned by TS
     const users = useSelector(selectAllUsers)
 
     useEffect(() => {
-        dispatch(allNotificationsRead())    // executes on every renders
+        dispatch(allNotificationsRead({}))    // executes on every renders, passing in an empty curly brace as an initial payload 
     })
 
     const renderedNotifications = notifications.map((notification) => {     // chek if it's actually {any} type
         const date = parseISO(notification.date)
         const timeAgo = formatDistanceToNow(date)
-        const user = users.find(user => user.id === notification.user) || {
+        const user = users.find(user => user.id === notification.user) || { // use EntityId for User's state to fix this
             name: 'Unknown User'
         }
 

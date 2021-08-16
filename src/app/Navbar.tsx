@@ -8,19 +8,28 @@ import {
 
 export const Navbar = () => {
   const dispatch = useDispatch()
-  const notifications: any = useSelector(selectAllNotifications)
-  const numUnreadNotifications = notifications.filter((n: any) => !n.read).length
+  const notifications = useSelector(selectAllNotifications)
+  const numUnreadNotifications = notifications.filter((n) => !n.read).length
+
+  const unreadNotificationsBadge = (() => {
+    if (numUnreadNotifications > 0) {
+      return (
+        <span className="badge">{numUnreadNotifications}</span>
+      )
+    }
+    return <></>
+  })()
+
+  // let unreadNotificationsBadge
+
+  // if (numUnreadNotifications > 0) {   
+  //   unreadNotificationsBadge = (
+  //     <span className="badge">{numUnreadNotifications}</span>
+  //   )
+  // }
 
   const fetchNewNotifications = () => {   // why not useEffect here ?
     dispatch(fetchNotifications())
-  }
-
-  let unreadNotificationsBadge
-
-  if (numUnreadNotifications > 0) {   // ??
-    unreadNotificationsBadge = (
-      <span className="badge">{numUnreadNotifications}</span>
-    )
   }
   return (
     <nav>
