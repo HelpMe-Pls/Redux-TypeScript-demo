@@ -1,20 +1,37 @@
-import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
+import {
+    createSlice,
+    createAsyncThunk,
+    createEntityAdapter,
+    EntityId,
+    EntityState,
+    SliceCaseReducers
+} from '@reduxjs/toolkit'
 
+import { RootState, AppDispatch } from '../../app/store'
 import { client } from '../../api/client'
 
+export interface INotiState {
+    id: EntityId
+    date: string
+    message: string
+    user: number
+    read: boolean
+    isNew: boolean
+}
 
-// interface INotiState {
-//     read: boolean,
-//     isNew: boolean,
-//     date: string
-// }
-
-const notificationsAdapter = createEntityAdapter({
-    sortComparer: (a: any, b: any) => b.date.localeCompare(a.date),
+const notificationsAdapter = createEntityAdapter<INotiState>({
+    sortComparer: (a, b) => b.date.localeCompare(a.date),
 })
 
 
-export const fetchNotifications = createAsyncThunk(
+export const fetchNotifications = createAsyncThunk<
+    INotiState[],
+    void,
+    {
+        dispatch: AppDispatch,
+        state: RootState
+    }
+>(
     'notifications/fetchNotifications',
     async (_, { getState }) => {        // explain these 2 params ?
         const allNotifications = selectAllNotifications(getState()) // y getState() when it's already returns state.notifications ?
@@ -24,28 +41,32 @@ export const fetchNotifications = createAsyncThunk(
         const response = await client.get(
             `/fakeApi/notifications?since=${latestTimestamp}`
         )
-        return response.notifications
+        return response.notifications as INotiState[]
     }
 )
 
-const notificationsSlice = createSlice({
+const notificationsSlice = createSlice<EntityState<INotiState>, SliceCaseReducers<EntityState<INotiState>>, 'notifications'>({
     name: 'notifications',
     initialState: notificationsAdapter.getInitialState(),
     reducers: {
-        allNotificationsRead(state) {
-            Object.values(state.entities).forEach((notification) => {  // {notification} from the {state} or API ?
-                notification.read = true    // marks all notifications as read
+        allNotificationsRead(state: EntityState<INotiState>) {
+            Object.values(state.entities).forEach((notification) => {  // {notification} from the {state} could be undefined
+                if (notification) { // so we gotta make sure it's defined before initiating new value
+                    notification.read = true    // marks all notifications as read
+                }
             })
         }
     },
-    extraReducers: {
-        [fetchNotifications.fulfilled.toString()]: (state, action) => {
+    extraReducers: builder => {
+        builder.addCase(fetchNotifications.fulfilled, (state, action) => {
             Object.values(state.entities).forEach((notification) => {
-                // Any notifications we've read are no longer new
-                notification.isNew = !notification.read
+                if (notification) { // to make sure that there's no undefined edge case
+                    // Any notifications we've read are no longer new
+                    notification.isNew = !notification.read
+                }
             })
             notificationsAdapter.upsertMany(state, action.payload)
-        }
+        })
     }
 })
 
@@ -55,4 +76,4 @@ export const { allNotificationsRead } = notificationsSlice.actions  // to be dis
 
 export const {
     selectAll: selectAllNotifications,
-} = notificationsAdapter.getSelectors((state: any) => state.notifications)
+} = notificationsAdapter.getSelectors<RootState>((state) => state.notifications)
