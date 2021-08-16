@@ -28,7 +28,7 @@ export const Navbar = () => {
   //   )
   // }
 
-  const fetchNewNotifications = () => {   // why not useEffect here ?
+  const fetchNewNotifications = () => {   // not using useEffect because it's activated based OnClick, duh... 
     dispatch(fetchNotifications())
   }
   return (
