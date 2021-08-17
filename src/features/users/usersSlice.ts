@@ -1,15 +1,18 @@
-import { createAsyncThunk, createSlice, createEntityAdapter } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, createEntityAdapter, EntityId } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 import { RootState } from '../../app/store'
 
 export interface IUserState {
-    id: string,
+    id: EntityId
+    firstName: string
+    lastName: string
     name: string
+    username: string
 }
 
 const usersAdapter = createEntityAdapter<IUserState>()
 
-const initialState = usersAdapter.getInitialState()   // any better way to initiate an empty list ?
+const initialState = usersAdapter.getInitialState()
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
     const response = await client.get('/fakeApi/users')
@@ -20,8 +23,8 @@ const usersSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {},
-    extraReducers: {
-        [fetchUsers.fulfilled.toString()]: usersAdapter.setAll
+    extraReducers: builder => {
+        builder.addCase(fetchUsers.fulfilled, usersAdapter.setAll)
     }
 })
 
