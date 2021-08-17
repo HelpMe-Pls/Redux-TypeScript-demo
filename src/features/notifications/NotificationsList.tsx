@@ -7,8 +7,7 @@ import { selectAllUsers } from '../users/usersSlice'
 
 import {
     selectAllNotifications,
-    allNotificationsRead,
-    INotiState
+    allNotificationsRead
 } from './notificationsSlice'
 
 
@@ -21,7 +20,7 @@ export const NotificationsList = () => {
         dispatch(allNotificationsRead({}))    // executes on every renders, passing in an empty curly brace as an initial payload 
     })
 
-    const renderedNotifications = notifications.map((notification) => {     // chek if it's actually {any} type
+    const renderedNotifications = notifications.map((notification) => {
         const date = parseISO(notification.date)
         const timeAgo = formatDistanceToNow(date)
         const user = users.find(user => user.id === notification.user) || { // use EntityId for User's state to fix this
