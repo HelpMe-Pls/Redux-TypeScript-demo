@@ -4,10 +4,10 @@ import { selectAllUsers } from "./usersSlice"
 
 
 
-export const UsersList: React.FC<any> = () => {
+export const UsersList = () => {
     const users = useSelector(selectAllUsers)
 
-    const renderedUsers = users.map((user: any) => (
+    const renderedUsers = users.map((user) => (
         <li key={user.id}>
             <Link to={`/users/${user.id}`}>{user.name}</Link>
         </li>
