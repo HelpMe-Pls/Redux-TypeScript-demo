@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, createEntityAdapter, EntityId } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, createEntityAdapter, EntityState, EntityId } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 import { RootState } from '../../app/store'
 
@@ -16,10 +16,10 @@ const initialState = usersAdapter.getInitialState()
 
 export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
     const response = await client.get('/fakeApi/users')
-    return response.users
+    return response.users as IUserState[]
 })
 
-const usersSlice = createSlice({
+const usersSlice = createSlice<EntityState<IUserState>, {}, "users">({
     name: 'users',
     initialState,
     reducers: {},
