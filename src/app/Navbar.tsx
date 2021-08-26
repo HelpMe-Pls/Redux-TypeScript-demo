@@ -34,7 +34,7 @@ export const Navbar = () => {
   return (
     <nav>
       <section>
-        <h1>Redux_TS Demo</h1>
+        <h1>Redux with TS Demo</h1>
 
         <div className="navContent">
           <div className="navLinks">
