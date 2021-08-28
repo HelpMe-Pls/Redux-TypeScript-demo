@@ -3,19 +3,38 @@ We're gonna use createSlice function (from Redux toolkit) to make a reducer func
 handle out posts data. It needs to some initial data included so that
 the Redux store has those values loaded when the app starts up */
 
-import { createSlice, createAsyncThunk, createSelector, createEntityAdapter } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk, createSelector, createEntityAdapter, EntityId, PayloadAction } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
+import { Status } from '../../app/status'
 import { RootState } from '../../app/store'
-import { IUserState } from '../users/usersSlice'
 
-// createEntityAdapter implicitly define the {posts}'s properties as `any` so we don't need an interface for it 
-// interface IPostState {
-//     posts: any[],
-//     status: string,
-//     error: any
-// }
 
-const postsAdapter = createEntityAdapter({
+export interface Reactions {
+    thumbsUp: number
+    hooray: number
+    heart: number
+    rocket: number
+    eyes: number
+}
+
+export type AvailableReaction = keyof Reactions
+
+export interface IPostState {
+    id: EntityId
+    title: string
+    date: string
+    content: string
+    user: string
+    reactions: Reactions
+}
+
+export interface AddPostBody {
+    title: string
+    content: string
+    user: string
+}
+
+const postsAdapter = createEntityAdapter<IPostState>({
     sortComparer: (a: any, b: any) => b.date.localeCompare(a.date), // sort newer items to the front based on the post.date field
 })
 
@@ -28,25 +47,31 @@ const postsAdapter = createEntityAdapter({
 
 // getInitialState() returns an empty {ids: [], entities: {}} normalized state object
 // You can pass in more fields (in this case: {status} and {error}) to getInitialState, and those will be merged in.
-const initialState = postsAdapter.getInitialState({
-    status: 'idle',
+const initialState = postsAdapter.getInitialState<{ status: Status, error: string | null }>({
+    status: Status.IDLE,
     error: null,
 })
 
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {    // 'posts/fetchPosts' (a string) will be used as the prefix for the generated action types
-    const response = await client.get('/fakeApi/posts')
-    return response.posts   // response is logged in console by miragejs or we can view it in the "Action" tab from Redux Devtool 
-    // this second param as a "payload creator" callback function that should return a Promise containing some data, or a rejected Promise with an error
+export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (_, { rejectWithValue }) => {    // 'posts/fetchPosts' (a string) will be used as the prefix for the generated action types
+    // async acts as a "payload creator" callback function that should return a Promise containing some data, or a rejected Promise with an error
+    try {
+        const response = await client.get('/fakeApi/posts')
+        return response.posts as IPostState[]  // response is logged in console by miragejs or we can view it in the "Action" tab from Redux Devtool 
+    }
+    catch (err) {
+        return rejectWithValue(err.message);
+    };
 })
+
 
 export const addNewPost: any = createAsyncThunk( //We can use {createAsyncThunk} to help with sending data, not just fetching it
     'posts/addNewPost',
     // The payload creator receives the partial `{title, content, user}` object
-    async (initialPost) => {
+    async (initialPost: AddPostBody) => {
         // We send the initial data to the fake API server with POST method
         const response = await client.post('/fakeApi/posts', { post: initialPost })
         // The response includes the complete post object, including unique ID
-        return response.post
+        return response.post as IPostState
     }
 )
 
@@ -82,7 +107,7 @@ const postsSlice = createSlice({
                 }
             }
         }, */
-        reactionAdded(state, action) {
+        reactionAdded(state, action: PayloadAction<{ postId: EntityId, reaction: AvailableReaction }>) {
             const { postId, reaction } = action.payload
             const existingPost = state.entities[postId] // postId from payload
             if (existingPost) {
@@ -98,27 +123,27 @@ const postsSlice = createSlice({
             }
         },
     },
-    extraReducers: {
+    extraReducers: builder => {
         // Is used when a slice reducer needs to respond to other actions that weren't defined as part of its field
         // In this case, we need to listen for the "pending" and "fulfilled" action types dispatched by our fetchPosts thunk defined outside the slice.
-        [fetchPosts.pending.toString()]: (state) => {
-            state.status = 'loading'
-        },
-        [fetchPosts.fulfilled.toString()]: (state, action) => {
-            state.status = 'succeeded'
+        builder.addCase(fetchPosts.pending, state => {
+            state.status = Status.LOADING
+        })
+        builder.addCase(fetchPosts.fulfilled, (state, action: PayloadAction<IPostState[]>) => {
+            state.status = Status.SUCCEEDED
             // Add any fetched posts to the array
             // Use the `upsertMany` reducer as a mutating update utility:
             //   to add all of the incoming posts to the state, by passing in the draft {state} and the array of posts in action.payload
             //   If there's any items in action.payload that already existing in our state,
             //   the upsertMany function will merge them together based on matching IDs
             postsAdapter.upsertMany(state, action.payload)
-        },
-        [fetchPosts.rejected.toString()]: (state, action) => {
-            state.status = 'failed'
-            state.error = action.error.message
-        },
+        })
+        builder.addCase(fetchPosts.rejected, (state, action) => {
+            state.status = Status.FAILED
+            state.error = action.error.message as string
+        })
         // Use the `addOne` reducer for the fulfilled case to add one new post object to our state
-        [addNewPost.fulfilled]: postsAdapter.addOne,
+        builder.addCase(addNewPost.fulfilled, postsAdapter.addOne)
     }
 })
 
@@ -140,7 +165,7 @@ export const {
 // in the Redux state, so we pass in a small selector that returns state.posts
 
 export const selectPostsByUser = createSelector(
-    [selectAllPosts, (state: RootState, userId: IUserState) => userId], // not omitting {state} for the sake of calling it in UserPage
-    (posts, userId) => posts.filter((post: { user: IUserState }) => post.user === userId)
+    [selectAllPosts, (_state: RootState, userId: EntityId) => userId], // very odd way of declaring the state as {_state} because we're not using it here but calling it in UserPage
+    (posts, userId) => posts.filter(post => post.user === userId)
 )
 
