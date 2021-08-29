@@ -1,8 +1,10 @@
 import { unwrapResult } from '@reduxjs/toolkit'
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addNewPost } from './postsSlice'
 import { selectAllUsers } from '../users/usersSlice'
+import { Status } from '../../app/status'
+import { AppDispatch } from '../../app/store'
 
 
 export const AddPostForm = () => {
@@ -12,21 +14,22 @@ export const AddPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [userId, setUserId] = useState('')
-    const [addRequestStatus, setAddRequestStatus] = useState('idle')
+    const [addRequestStatus, setAddRequestStatus] = useState(Status.IDLE)
 
-    const dispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
     const users = useSelector(selectAllUsers)
 
-    const onTitleChanged = (e: any) => setTitle(e.target.value)
-    const onContentChanged = (e: any) => setContent(e.target.value)
-    const onAuthorChanged = (e: any) => setUserId(e.target.value)
+    const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)
+    const onContentChanged = (e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)
+    const onAuthorChanged = (e: ChangeEvent<HTMLSelectElement>) => setUserId(e.target.value)
 
-    const canSave = [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
-    const onSavePostClicked = async () => {
+    const canSave = [title, content, userId].every(Boolean) && addRequestStatus === Status.IDLE
+    const onSavePostClicked = async (e: ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault()
         if (canSave) {
             try {
-                setAddRequestStatus('pending')
-                const resultAction: any = await dispatch(
+                setAddRequestStatus(Status.LOADING)
+                const resultAction = await dispatch(
                     // When we call dispatch(addNewPost()), the async thunk returns a Promise from dispatch.
                     // We can await that promise here to know when the thunk has finished its request.
                     // But, we don't yet know if that request succeeded or failed.
@@ -42,7 +45,7 @@ export const AddPostForm = () => {
             } catch (err) {
                 console.error('Failed to save the post', err)
             } finally {
-                setAddRequestStatus('idle')
+                setAddRequestStatus(Status.IDLE)
             }
         }
     }
@@ -58,7 +61,7 @@ export const AddPostForm = () => {
     return (
         <section>
             <h2>Add a New Post</h2>
-            <form>
+            <form onSubmit={onSavePostClicked}>
                 <label htmlFor="postTitle">Post Title:</label>
                 <input
                     type="text"
@@ -80,7 +83,7 @@ export const AddPostForm = () => {
                     value={content}
                     onChange={onContentChanged}
                 />
-                <button type="button" onClick={onSavePostClicked} disabled={!canSave}>
+                <button type="button" disabled={!canSave}>
                     Save Post
                 </button>
                 {/* button without type will behave as submit type that's y we need to declare it as type="button",

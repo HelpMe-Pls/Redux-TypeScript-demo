@@ -64,7 +64,7 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (_, { rejec
 })
 
 
-export const addNewPost: any = createAsyncThunk( //We can use {createAsyncThunk} to help with sending data, not just fetching it
+export const addNewPost = createAsyncThunk( //We can use {createAsyncThunk} to help with sending data, not just fetching it
     'posts/addNewPost',
     // The payload creator receives the partial `{title, content, user}` object
     async (initialPost: AddPostBody) => {
