@@ -83,11 +83,9 @@ export const AddPostForm = () => {
                     value={content}
                     onChange={onContentChanged}
                 />
-                <button type="button" disabled={!canSave}>
+                <button type="submit" disabled={!canSave}>
                     Save Post
                 </button>
-                {/* button without type will behave as submit type that's y we need to declare it as type="button",
-                which does nothing for the button so that its functionality is solely depends on the onClick */}
             </form>
         </section>
     )
