@@ -1,27 +1,45 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router-dom'
-import { RootState } from '../../app/store'
+import { RouteComponentProps, useHistory } from 'react-router-dom'
+import { AppDispatch, RootState } from '../../app/store'
 
-import { postUpdated, selectPostById } from './postsSlice'
+import { IPostState, postUpdated, selectPostById } from './postsSlice'
 
-export const EditPostForm: React.FC<any> = ({ match }) => {
+export const EditPostForm = ({ match }: RouteComponentProps<{ postId: string }>) => {
     const { postId } = match.params
 
-    const post = useSelector((state: RootState) =>
+    const post = useSelector<RootState, IPostState | undefined>((state =>
         selectPostById(state, postId)
-    )
+    ))
 
-    const [title, setTitle] = useState(post.title)
-    const [content, setContent] = useState(post.content)
+    // this block of code placed here is illegal because it violates the rules of hook (if there's no post, the useState hooks would never be executed)
+    // if (!post) {
+    //     return (
+    //         <section>
+    //             <h2>Post Not Found</h2>
+    //         </section>
+    //     )
+    // }
 
-    const dispatch = useDispatch()
+    const [title, setTitle] = useState(post ? post.title : '')
+    const [content, setContent] = useState(post ? post.content : '')
+
+    const dispatch: AppDispatch = useDispatch()
     const history = useHistory()
 
-    const onTitleChanged = (e: any) => setTitle(e.target.value)
-    const onContentChanged = (e: any) => setContent(e.target.value)
+    if (!post) {
+        return (
+            <section>
+                <h2>Post Not Found</h2>
+            </section>
+        )
+    }
 
-    const onSavePostClicked = () => {
+    const onTitleChanged = (e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)
+    const onContentChanged = (e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)
+
+    const onSavePostClicked = (e: ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault()
         if (title && content) {
             dispatch(postUpdated({ id: postId, title, content }))
             history.push(`/posts/${postId}`)
@@ -31,7 +49,7 @@ export const EditPostForm: React.FC<any> = ({ match }) => {
     return (
         <section>
             <h2>Edit Post</h2>
-            <form>
+            <form onSubmit={onSavePostClicked}>
                 <label htmlFor="postTitle">Post Title:</label>
                 <input
                     type="text"
@@ -49,9 +67,9 @@ export const EditPostForm: React.FC<any> = ({ match }) => {
                     onChange={onContentChanged}
                 />
             </form>
-            <button type="button" onClick={onSavePostClicked}>
+            <button type="submit">
                 Save Post
-      </button>
+            </button>
         </section>
     )
 }
