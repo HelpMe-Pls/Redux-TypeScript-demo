@@ -10,3 +10,5 @@ export const PostAuthor: React.FC<any> = ({ userId }) => {
 
     return <span>by {author ? author.name : 'Unknown author'}</span>
 }
+
+// add note to why we should not use React.FC
