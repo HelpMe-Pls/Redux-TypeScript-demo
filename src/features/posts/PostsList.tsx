@@ -1,32 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
 
-import { PostAuthor } from './PostAuthor'
-import { TimeAgo } from './TimeAgo'
-import { ReactionButtons } from './ReactionButtons'
-import { fetchPosts, selectPostIds, selectPostById } from './postsSlice'
+import { fetchPosts, selectPostIds } from './postsSlice'
 import { RootState } from '../../app/store'
 import { useEffect } from 'react'
 
 
-let PostExcerpt: React.FC<any> = ({ postId }) => {
-    const post = useSelector((state: RootState) => selectPostById(state, postId))
-    return (
-        <article className="post-excerpt" key={post.id}>
-            <h3>{post.title}</h3>
-            <div>
-                <PostAuthor userId={post.user} />
-                <TimeAgo timestamp={post.date} />
-            </div>
-            <p className="post-content">{post.content.substring(0, 100)}</p>    {/* posts limited to 100 char */}
-
-            <ReactionButtons post={post} />
-            <Link to={`/posts/${post.id}`} className="button muted-button">
-                View Post
-            </Link>
-        </article>
-    )
-}
 
 export const PostsList = () => {
     /* The component reads data from the Redux store using the {useSelector} hook.  
