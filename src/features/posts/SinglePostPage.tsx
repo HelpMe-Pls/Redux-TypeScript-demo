@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
@@ -9,7 +9,7 @@ import { ReactionButtons } from './ReactionButtons'
 import { RootState } from '../../app/store'
 import { selectPostById } from './postsSlice'
 
-export const SinglePostPage: React.FC<any> = ({ match }) => {
+export const SinglePostPage = ({ match }: RouteComponentProps<{ postId: string }>) => {
     const { postId } = match.params         // it has to be {match} or it wouldn't work with <Link>
 
     const post = useSelector((state: RootState) =>

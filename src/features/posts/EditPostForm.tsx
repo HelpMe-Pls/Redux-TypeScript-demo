@@ -27,6 +27,7 @@ export const EditPostForm = ({ match }: RouteComponentProps<{ postId: string }>)
     const dispatch: AppDispatch = useDispatch()
     const history = useHistory()
 
+    // {post} is possibly undefined so we gotta cover it 
     if (!post) {
         return (
             <section>
