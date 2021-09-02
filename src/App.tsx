@@ -29,7 +29,7 @@ function App() {
           <Route
             exact path="/"
             render={() => (
-              <React.Fragment>
+              <React.Fragment>  {/* add note y use dis */}
                 <AddPostForm />
                 <PostsList />
               </React.Fragment>
