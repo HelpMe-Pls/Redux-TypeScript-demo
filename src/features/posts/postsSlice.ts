@@ -58,7 +58,7 @@ export const fetchPosts = createAsyncThunk('posts/fetchPosts', async (_, { rejec
         const response = await client.get('/fakeApi/posts')
         return response.posts as IPostState[]  // response is logged in console by miragejs or we can view it in the "Action" tab from Redux Devtool 
     }
-    catch (err) {
+    catch (err: any) {
         return rejectWithValue(err.message);
     };
 })

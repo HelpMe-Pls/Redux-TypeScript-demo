@@ -1,9 +1,9 @@
-import React from 'react'
 import { useDispatch } from 'react-redux'
+import { AppDispatch } from '../../app/store'
 
-import { reactionAdded } from './postsSlice'
+import { reactionAdded, AvailableReaction, IPostState } from './postsSlice'
 
-const reactionEmoji = {
+const reactionEmoji: { [key in AvailableReaction]: string } = {
     thumbsUp: '👍',
     hooray: '🎉',
     heart: '❤️',
@@ -11,8 +11,8 @@ const reactionEmoji = {
     eyes: '👀',
 }
 
-export const ReactionButtons: React.FC<any> = ({ post }) => {
-    const dispatch = useDispatch()
+export const ReactionButtons = ({ post }: { post: IPostState }) => {
+    const dispatch: AppDispatch = useDispatch()
 
     const reactionButtons = Object.entries(reactionEmoji).map(([name, emoji]) => {
         return (
@@ -21,10 +21,10 @@ export const ReactionButtons: React.FC<any> = ({ post }) => {
                 type="button"
                 className="muted-button reaction-button"
                 onClick={() =>
-                    dispatch(reactionAdded({ postId: post.id, reaction: name }))
+                    dispatch(reactionAdded({ postId: post.id, reaction: name as AvailableReaction }))
                 }
             >
-                {emoji} {post.reactions[name]}
+                {emoji} {post.reactions[name as AvailableReaction]}
             </button>
         )
     })
