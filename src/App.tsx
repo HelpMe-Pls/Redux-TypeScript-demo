@@ -29,10 +29,12 @@ function App() {
           <Route
             exact path="/"
             render={() => (
-              <React.Fragment>  {/* add note y use dis */}
+              <>  {/* Shorthand for React.Fragment (except that it doesn’t support keys or attributes) 
+              We use fragment to add multiple components into the DOM without the need to group them inside a div,
+              because the div adds another node into the DOM, which could leads to performance issues in large projects. */}
                 <AddPostForm />
                 <PostsList />
-              </React.Fragment>
+              </>
             )}
           />
           <Route exact path="/posts/:postId" component={SinglePostPage} />
