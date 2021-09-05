@@ -30,7 +30,7 @@ function App() {
             exact path="/"
             render={() => (
               <>  {/* Shorthand for React.Fragment (except that it doesn’t support keys or attributes) 
-              We use fragment to add multiple components into the DOM without the need to group them inside a div,
+              We use fragment to add multiple components into the DOM without the need to group them inside a div (unless you wanna have a div style that applies to all the components inside of it),
               because the div adds another node into the DOM, which could leads to performance issues in large projects. */}
                 <AddPostForm />
                 <PostsList />

@@ -1,13 +1,22 @@
-import React from 'react'
 import { parseISO, formatDistanceToNow } from 'date-fns'
 
-export const TimeAgo: React.FC<any> = ({ timestamp }) => {
-    let timeAgo = ''
-    if (timestamp) {
-        const date = parseISO(timestamp)
-        const timePeriod = formatDistanceToNow(date)
-        timeAgo = `${timePeriod} ago`
-    }
+export const TimeAgo = ({ timestamp }: { timestamp: string | undefined }) => {
+    // let timeAgo = ''
+    // if (timestamp) {
+    //     const date = parseISO(timestamp)
+    //     const timePeriod = formatDistanceToNow(date)
+    //     timeAgo = `${timePeriod} ago`
+    // }
+
+    // use IFFE to make it a const instead of using {let}:
+    const timeAgo: string = (() => {
+        if (timestamp) {
+            const date = parseISO(timestamp)
+            const timePeriod = formatDistanceToNow(date)
+            return `${timePeriod} ago`
+        }
+        return ''
+    })()
 
     return (
         <span title={timestamp}>

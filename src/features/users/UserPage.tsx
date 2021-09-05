@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { Link, RouteComponentProps } from 'react-router-dom'
 
 import { IUserState, selectUserById } from '../users/usersSlice'
-import { selectPostsByUser } from '../posts/postsSlice'
+import { IPostState, selectPostsByUser } from '../posts/postsSlice'
 import { RootState } from '../../app/store'
 
 export const UserPage = ({ match }: RouteComponentProps<{ userId: string }>) => {
@@ -12,7 +12,7 @@ export const UserPage = ({ match }: RouteComponentProps<{ userId: string }>) => 
 
     // run the React profiler while fetching notifications, we should see that <UserPage> doesn't re-render anymore 
     //=>help us avoid unnecessary re-renders, and also avoid doing potentially complex or expensive calculations if the input data hasn't changed
-    const postsForUser = useSelector<RootState, Post[]>(state => selectPostsByUser(state, userId))
+    const postsForUser = useSelector<RootState, IPostState[]>(state => selectPostsByUser(state, userId))
 
     // const postsForUser = useSelector((state: RootState) => {
     //     const allPosts = selectAllPosts(state)  // the type of allPosts: any[] coz IPostState.posts: any[]
