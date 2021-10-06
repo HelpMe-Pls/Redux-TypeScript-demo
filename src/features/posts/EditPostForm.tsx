@@ -68,7 +68,7 @@ export const EditPostForm = ({ match }: RouteComponentProps<{ postId: string }>)
                     onChange={onContentChanged}
                 />
             </form>
-            <button type="submit">
+            < button> {/* not declaring button's type it'll be dafaulted as type="submit" */}
                 Save Post
             </button>
         </section>
