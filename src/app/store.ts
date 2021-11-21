@@ -14,7 +14,7 @@ export const store = configureStore({
   },
   /* This tells Redux that we want our TOP-LEVEL STATE OBJECT to have a field named {posts} inside, and all the 
   data for {state.posts} (e.g from the useSelector hook) will be updated by the {postsReducer} function
-  when actions are dispatched */
+  when actions are dispatched, same thing for {users} and {notifications} */
 });
 
 
