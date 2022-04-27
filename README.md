@@ -68,7 +68,8 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - Reducers will run, check to see if this action is relevant, and return new state if appropriate
     - Temporary data like form input values should be kept as React component state. Dispatch a Redux action to update the store when the user is done with the form.
 
-#############################
+
+
 # Using Redux data:
 - Any React component can use data from the Redux store as needed
     - Any component can read any data that is in the Redux store
@@ -83,7 +84,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - Reducers can contain whatever logic is needed to calculate the next state
     - Action objects should contain just enough info to describe what happened
 
-#############################
+
 
 # Async logic and data fetching:
 - You can write reusable "selector" functions to encapsulate reading values from the Redux state
@@ -100,7 +101,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
     - You can listen for these action types in `createSlice` using the `extraReducers` field, and update the state in reducers based on those actions.
     - Action creators can be used to automatically fill in the keys of the `extraReducers` object so the slice knows what actions to listen for.
 
-#############################
+
 
 # Performance and Normalizing data:
 - Memoized selector functions can be used to optimize performance
