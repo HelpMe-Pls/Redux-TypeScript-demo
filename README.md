@@ -47,28 +47,34 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 <br />
 
 # What I've learnt
-- Redux is more useful when:
-    - You have **large** amounts of application state that are needed in many places in the app.
-    - The app state is updated **frequently** over time.
-    - The logic to update that state may be complex.
-    - The app has a medium or large-sized codebase, and might be worked on by many people.
+- First, ask yourself (or your team) these question:
+    - What *specific* problems are you trying to solve?
+    - What problems do these tools solve?
+    - Where’s the overlap between those?
+- Redux like generic state management tool that can be used for:
+    - Caching state from a server (if this is ALL you use Redux for then consider using `react-query` or `Apollo Client` instead).
+    - Other complex state management on the client (if using React `useContext`, `useState`, `useReducer` is/will be *obviously* insufficient at many places).
+    - Keep in mind that React `Context` in and of itself is a form of Dependency Injection (*__not__* a state management system) which is scoped to some portion of your subtree, where you say “Here is a value”, and any portion of that component subtree can ask to read the value. That’s literally all it does.
+    - Observing *when*, *why*, and *how* the state in your application has updated, and visualize the changes to your state over time.
+    - Cases where you want to write your state management logic **completely separate** from the UI layer.
+    - An app which has a medium or large-sized codebase, and might be worked on by many people.
 - Redux is a library for managing **global** application state:
-    - Redux is typically used with the [`react-redux`](https://github.com/reduxjs/react-redux) library for integrating Redux and React together.
+    - Redux is typically used with the [`react-redux`](https://github.com/reduxjs/react-redux) library to integrate Redux and React together.
     - [`redux-toolkit`](https://github.com/reduxjs/redux-toolkit) is the recommended way to write Redux logic.
 - Redux uses a "**one-way data flow**" app structure:
-    - State describes the condition of the app at a point in time, and UI renders based on that state
+    - State describes the condition of the app at a point in time, and UI renders based on that state.
     - When something happens in the app:
         - The UI dispatches an action.
         - The store runs the reducers, and the state is updated based on what occurred.
         - The store notifies the UI that the state has changed.
         - The UI re-renders based on the new state.
-    - Redux uses several types of code
+    - Redux is bascially made up of:
         - *Actions* are plain objects with a type field, and describe "what happened" in the app.
-        - *Reducers* are **functions** that calculate a new state value based on previous state + an action.
+        - *Reducers* are **functions** that return a new state value based on previous state + an action.
         - A Redux *store* runs the root reducer whenever an action is dispatched.
 
 ## Basic Redux data flow:
-- Our posts list read the initial set of posts from the store with `useSelector` and rendered the initial UI.
+- Our `PostsList` read the initial set of posts from the store with `useSelector` and rendered the initial UI.
 - We dispatched the `postAdded` action containing the data for the new post entry.
 - The posts reducer saw the `postAdded` action, and updated the posts array (in the store) with the new entry.
 - The Redux store told the UI that some data had changed.

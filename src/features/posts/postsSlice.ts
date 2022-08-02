@@ -34,6 +34,7 @@ export interface AddPostBody {
     user: string
 }
 
+// This `postsAdapter` is kinda like `state.posts` on steroids
 const postsAdapter = createEntityAdapter<IPostState>({
     sortComparer: (a: any, b: any) => b.date.localeCompare(a.date), // sort newer items to the front based on the post.date field
 })
@@ -79,16 +80,16 @@ const postsSlice = createSlice({
     name: 'posts',  //represents action types
     initialState,
     reducers: {
-        /* this block is used for hard-coded data
+        /* this block was used for hard-coded data
         postAdded: {
             reducer(state, action: PayloadAction<any>) {
-                // since the posts slice ONLY knows about the data it's responsible for, the {state} arg will be
-                // the array of posts by itself, and not the entire Redux state object.
+                // since the posts slice ONLY knows about the data it's responsible for, the `state` arg will be
+                // the array of posts by itself, and not the entire Redux state object
                 state.posts.push(action.payload)  // don't try to mutate any data outside of {createSlice} for the sake of immutability
             },
             prepare(title, content, userId) {
                 // If you want to add a meta or error property to your action, or customize the payload of your action,
-                // you have to use the {prepare} notation for defining the case reducer
+                // you have to use the `prepare` notation for defining the reducer's case
                 return {
                     payload: {
                         id: nanoid(),
@@ -109,14 +110,17 @@ const postsSlice = createSlice({
         }, */
         reactionAdded(state, action: PayloadAction<{ postId: EntityId, reaction: AvailableReaction }>) {
             const { postId, reaction } = action.payload
-            const existingPost = state.entities[postId] // postId from payload
+
+            // `state.entities` from `intialState` which is a draft that you can "mutate"
+            const existingPost = state.entities[postId] // `postId` from payload
+
             if (existingPost) {
                 existingPost.reactions[reaction]++
             }
         },
-        postUpdated(state, action) {
-            const { id, title, content } = action.payload
-            const existingPost = state.entities[id] // id from payload
+        postUpdated(state, action: PayloadAction<{ postId: EntityId, title: string, content: string }>) {
+            const { postId, title, content } = action.payload
+            const existingPost = state.entities[postId]
             if (existingPost) {
                 existingPost.title = title
                 existingPost.content = content
@@ -125,7 +129,7 @@ const postsSlice = createSlice({
     },
     extraReducers: builder => {
         // Is used when a slice reducer needs to respond to other actions that weren't defined as part of its field
-        // In this case, we need to listen for the "pending" and "fulfilled" action types dispatched by our fetchPosts thunk defined outside the slice.
+        // In this case, we need to listen for the "pending" and "fulfilled" action types dispatched by our fetchPosts thunk defined OUTSIDE the slice.
         builder.addCase(fetchPosts.pending, state => {
             state.status = Status.LOADING
         })
@@ -133,34 +137,34 @@ const postsSlice = createSlice({
             state.status = Status.SUCCEEDED
             // Add any fetched posts to the array
             // Use the `upsertMany` reducer as a mutating update utility:
-            //   to add all of the incoming posts to the state, by passing in the draft {state} and the array of posts in action.payload
+            //   to add all of the incoming posts to the state, by passing in the draft `state` and the array of posts in action.payload
             //   If there's any items in action.payload that already existing in our state,
-            //   the upsertMany function will merge them together based on matching IDs
+            //   the `upsertMany` function will merge them together based on matching IDs
             postsAdapter.upsertMany(state, action.payload)
         })
         builder.addCase(fetchPosts.rejected, (state, action) => {
             state.status = Status.FAILED
-            state.error = action.error.message as string
+            state.error = action.error.message!
         })
         // Use the `addOne` reducer for the fulfilled case to add one new post object to our state
         builder.addCase(addNewPost.fulfilled, postsAdapter.addOne)
     }
 })
 
-/* When we write {postAdded} reducer function, {createSlice} will automatically generate an "action creator" function with
-the same name. We can export it and use it in our UI component to dispatch an action when the user clicks "Save Post" */
+/* When we write `postUpdate reducer function, {createSlice} will automatically generate an "action creator" function with
+the same name, same goes for `reactionAdded`. We can export them and use it in our UI component to dispatch an action when the user clicks "Save Post" */
 export const { postUpdated, reactionAdded } = postsSlice.actions
 
-export default postsSlice.reducer   //to import it in the store
+export default postsSlice.reducer   // to be imported in the store
 
-// Export the customized selectors for this adapter using the generated `getSelectors`    
+// Export the customized selectors for this adapter using the returned values from `getSelectors`    
 export const {
     // use ES6 destructuring syntax to RENAME them (the GENERATED EntitySelectors, left side of the colon) 
     // as we export them and use them as the old selector names (right side of the colon)
     selectAll: selectAllPosts,
     selectById: selectPostById,
     selectIds: selectPostIds,
-} = postsAdapter.getSelectors((state: RootState) => state.posts)   // Pass in a selector that returns the posts slice of state
+} = postsAdapter.getSelectors((state: RootState) => state.posts)   // Pass in a selector that returns the posts slice of the global state: 
 // Since the selectors are called with the root Redux state object, they need to know where to find our posts data
 // in the Redux state, so we pass in a small selector that returns state.posts
 
